@@ -133,9 +133,9 @@ class Count extends StatelessWidget {
         '$count',
         key: ValueKey(count),
         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
-            ),
+          fontWeight: FontWeight.bold,
+          color: Colors.blueAccent,
+        ),
       ),
     );
   }
