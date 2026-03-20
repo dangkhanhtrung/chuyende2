@@ -1,58 +1,153 @@
 import 'package:flutter/material.dart';
 
-const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
-
 void main() {
-  runApp(MeterialAppExample());
+  runApp(const MyApp());
 }
 
-class MeterialAppExample extends StatelessWidget {
+const Color darkBlue = Color(0xFF12202F);
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(
+      debugShowCheckedModeBanner: false,
+      title: 'Demo App',
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.blue,
         scaffoldBackgroundColor: darkBlue,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Trang ví dụ")
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Trang ví dụ",
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        body: Column(
+        centerTitle: true,
+      ),
+
+      // Drawer đẹp hơn
+      drawer: Drawer(
+        child: Column(
           children: [
-            Image.network('https://picsum.photos/seed/picsum/200/300'),
-            Image.network('https://picsum.photos/seed/picsum/200/300')
-          ]
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+              ),
+              accountName: const Text("Khánh Trung"),
+              accountEmail: const Text("example@email.com"),
+              currentAccountPicture: const CircleAvatar(
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/300',
                 ),
-                child: Text('Phần đầu ngăn kéo'),
               ),
-              ListTile(
-                title: const Text('Mục 1'),
-                onTap: () {
-                  
-                },
-              ),
-              ListTile(
-                title: const Text('Mục 2'),
-                onTap: () {
-                  
-                },
-              ),
-            ],
-          ),
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Trang chủ'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Cài đặt'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('Thông tin'),
+              onTap: () => Navigator.pop(context),
+            ),
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => {},
-          tooltip: 'Tăng biến đếm',
-          child: const Icon(Icons.add),
-        ),
+      ),
+
+      // Body responsive
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          int crossAxisCount = 2;
+
+          if (constraints.maxWidth > 900) {
+            crossAxisCount = 4; // desktop
+          } else if (constraints.maxWidth > 600) {
+            crossAxisCount = 3; // tablet
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(12),
+            child: GridView.builder(
+              itemCount: 10,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.8,
+              ),
+              itemBuilder: (context, index) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(
+                        'https://picsum.photos/300/400?random=$index',
+                        fit: BoxFit.cover,
+                      ),
+
+                      // overlay gradient
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                      ),
+
+                      // text
+                      Positioned(
+                        bottom: 10,
+                        left: 10,
+                        right: 10,
+                        child: Text(
+                          "Ảnh ${index + 1}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+
+      // FAB đẹp hơn
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+        label: const Text("Thêm"),
       ),
     );
   }
